@@ -1,0 +1,26 @@
+{
+	"compilerOptions": {
+		"target": "es5",
+		"sourceMap": true, //断点用的 
+		"out": "./engine/out/engine.js",
+		// "outDir":"./out",
+		"declaration": true
+	},
+	// "exclude": [//不进行编译的文件
+	// 	"node_modules",
+	// 	"out"
+	// ]
+	"files": [
+		"src/Render/CanvasRenderer.ts",
+		"src/core/tween.ts",
+		"src/core/event.ts",
+		"src/core/ticker.ts",
+		"src/core/math.ts",
+		"src/core/Display/DisplayObject.ts",
+		"src/core/Display/DisplayObjectContainer.ts",
+		"src/core/Display/stage.ts",
+		"src/core/Display/Bitmap.ts",
+		"src/core/Display/TextField.ts",
+		"src/platforms/browser/driver.ts"
+	]
+}
