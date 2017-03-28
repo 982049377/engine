@@ -10,6 +10,52 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var engine;
 (function (engine) {
+    var RES;
+    (function (RES) {
+        var __cache = {};
+        function getRes(name) {
+            if (__cache[name]) {
+                return __cache[name];
+            }
+            else {
+                __cache[name] = new ImageResource(name);
+                return __cache[name];
+            }
+        }
+        RES.getRes = getRes;
+        function loadRes(name) {
+            var resource = getRes(name);
+            resource.load();
+        }
+        RES.loadRes = loadRes;
+        function loadConfig() {
+            for (var index in __cache) {
+                __cache[index].load();
+            }
+        }
+        RES.loadConfig = loadConfig;
+        var ImageResource = (function () {
+            function ImageResource(url) {
+                this.width = 0;
+                this.height = 0;
+                this.url = url;
+                this.bitmapData = document.createElement("img");
+                this.bitmapData.src = "loading";
+            }
+            ImageResource.prototype.load = function () {
+                var _this = this;
+                var realResource = document.createElement("img");
+                realResource.src = this.url;
+                realResource.onload = function () {
+                    _this.bitmapData = realResource;
+                };
+            };
+            return ImageResource;
+        }());
+    })(RES = engine.RES || (engine.RES = {}));
+})(engine || (engine = {}));
+var engine;
+(function (engine) {
     var CanvasRenderer = (function () {
         function CanvasRenderer(stage, context2D) {
             this.stage = stage;
@@ -640,13 +686,17 @@ var engine;
          * @language zh_CN
          */
         Tween.prototype.to = function (props, duration, ease) {
+            var _this = this;
             if (ease === void 0) { ease = undefined; }
             if (isNaN(duration) || duration < 0) {
                 duration = 0;
             }
+            engine.startTick(function () {
+                console.log(_this._curQueueProps);
+            });
+            console.log(this._curQueueProps);
             this._addStep({ d: duration || 0, p0: this._cloneProps(this._curQueueProps), e: ease, p1: this._cloneProps(this._appendQueueProps(props)) });
             //加入一步set，防止游戏极其卡顿时候，to后面的call取到的属性值不对
-            console.log(this._curQueueProps);
             return this.set(props);
         };
         /**

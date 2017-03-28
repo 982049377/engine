@@ -1,3 +1,8 @@
+declare namespace engine.RES {
+    function getRes(name: string): any;
+    function loadRes(name: any): void;
+    function loadConfig(): void;
+}
 declare namespace engine {
     class CanvasRenderer {
         private stage;

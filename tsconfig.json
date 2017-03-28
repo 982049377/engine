@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"target": "es5",
 		"sourceMap": true, //断点用的 
-		"out": "./engine/out/engine.js",
+		"out": "./out/engine.js",
 		// "outDir":"./out",
 		"declaration": true
 	},
@@ -11,6 +11,7 @@
 	// 	"out"
 	// ]
 	"files": [
+		"src/core/resource.ts",
 		"src/Render/CanvasRenderer.ts",
 		"src/core/tween.ts",
 		"src/core/event.ts",
