@@ -1,19 +1,20 @@
 namespace engine {
     export class Bitmap extends DisplayObject {
-        public img: HTMLImageElement = null;
-        public isLoaded = false;
-        constructor() {
+        public img: engine.RES.ImageResource = null;
+        // public isLoaded = false;
+        constructor(name: string) {
             super("Bitmap");
-            this.img = document.createElement("img");
+            this.img = engine.RES.getRes(name);
+            // this.img = document.createElement("img");
         }
-        public _src = "";
-        set src(value: string) {
-            this._src = value;
-            this.isLoaded = false;
-            /**image没有读取，不起作用*/
-            // this.width = this.img.naturalWidth;
-            // this.height = this.img.naturalHeight;
-        }
+        // public _src = "";
+        // set src(value: string) {
+        //     this._src = value;
+        //     this.isLoaded = false;
+        //     /**image没有读取，不起作用*/
+        //     // this.width = this.img.naturalWidth;
+        //     // this.height = this.img.naturalHeight;
+        // }
 
         // render(canvas: CanvasRenderingContext2D) {
         //     if (this.isLoaded) {

@@ -13,21 +13,21 @@ var engine;
     var RES;
     (function (RES) {
         var ImageJson = [
-            { name: "loading", url: "loading.png", width: 200, height: 200 },
+            { id: "loading", url: "loading.png", width: 200, height: 200 },
         ];
         var __cache = {};
-        function getRes(name) {
-            if (__cache[name]) {
-                return __cache[name];
+        function getRes(id) {
+            if (__cache[id]) {
+                return __cache[id];
             }
             else {
-                __cache[name] = new ImageResource(name);
-                return __cache[name];
+                __cache[id] = new ImageResource(id);
+                return __cache[id];
             }
         }
         RES.getRes = getRes;
-        function loadRes(name) {
-            var resource = getRes(name);
+        function loadRes(id) {
+            var resource = getRes(id);
             resource.load();
             return resource;
         }
@@ -38,22 +38,23 @@ var engine;
             }
         }
         RES.load = load;
-        function addImageJson(name, url, width, height) {
+        function addImageJson(id, url, width, height) {
             ImageJson.forEach(function (element) {
-                if (element.name == name)
+                if (element.id == id)
                     return;
             });
-            var tempElement = { name: name, url: url, width: width, height: height };
+            var tempElement = { id: id, url: url, width: width, height: height };
             ImageJson.push(tempElement);
         }
         RES.addImageJson = addImageJson;
         var ImageResource = (function () {
-            function ImageResource(name) {
+            function ImageResource(id) {
                 var _this = this;
                 this.width = 0;
                 this.height = 0;
+                this.isLoaded = false;
                 ImageJson.forEach(function (element) {
-                    if (element.name == name) {
+                    if (element.id == id) {
                         _this.width = element.width;
                         _this.height = element.height;
                         _this.url = element.url;
@@ -61,13 +62,14 @@ var engine;
                 });
                 // // this.url = url;
                 this.bitmapData = document.createElement("img");
-                ImageResource.loadImage = document.createElement("img");
-                ImageResource.loadImage.src = "loading.png";
-                console.log(ImageResource.loadImage.src);
-                ImageResource.loadImage.onload = function () {
-                    _this.bitmapData = ImageResource.loadImage;
-                };
-                this.bitmapData = ImageResource.loadImage;
+                // ImageResource.loadImage = document.createElement("img");
+                // ImageResource.loadImage.src = "..\..\loading.png";
+                // console.log(ImageResource.loadImage.src);
+                // ImageResource.loadImage.onload = () => {
+                //     this.bitmapData = ImageResource.loadImage;
+                // }
+                // this.bitmapData = ImageResource.loadImage;
+                this.load();
             }
             ImageResource.prototype.load = function () {
                 var _this = this;
@@ -75,6 +77,7 @@ var engine;
                 realResource.src = this.url;
                 realResource.onload = function () {
                     _this.bitmapData = realResource;
+                    _this.isLoaded = true;
                 };
             };
             return ImageResource;
@@ -116,18 +119,20 @@ var engine;
             }
         };
         CanvasRenderer.prototype.renderBitmap = function (bitmap) {
-            this.context2D.drawImage(bitmap.img, 0, 0);
-            if (bitmap.isLoaded) {
-                this.context2D.drawImage(bitmap.img, 0, 0, bitmap.img.width, bitmap.img.height);
+            // this.context2D.drawImage(bitmap.img.bitmapData, 0, 0);
+            console.log("in render bitmap");
+            if (bitmap.img.isLoaded) {
+                this.context2D.drawImage(bitmap.img.bitmapData, 0, 0, bitmap.img.width, bitmap.img.height);
+                console.log("render bitmap");
             }
             else {
-                bitmap.img.src = bitmap._src;
+                // bitmap.img.bitmapData.src = bitmap._src;
                 if (bitmap.width == 0)
-                    bitmap.width = bitmap.img.naturalWidth;
+                    bitmap.width = bitmap.img.width;
                 if (bitmap.height == 0)
-                    bitmap.height = bitmap.img.naturalHeight;
-                bitmap.img.onload = function () {
-                    bitmap.isLoaded = true;
+                    bitmap.height = bitmap.img.height;
+                bitmap.img.bitmapData.onload = function () {
+                    bitmap.img.isLoaded = true;
                 };
             }
         };
@@ -1286,25 +1291,22 @@ var engine;
 (function (engine) {
     var Bitmap = (function (_super) {
         __extends(Bitmap, _super);
-        function Bitmap() {
+        // public isLoaded = false;
+        function Bitmap(name) {
             var _this = _super.call(this, "Bitmap") || this;
             _this.img = null;
-            _this.isLoaded = false;
-            _this._src = "";
-            _this.img = document.createElement("img");
+            _this.img = engine.RES.getRes(name);
             return _this;
+            // this.img = document.createElement("img");
         }
-        Object.defineProperty(Bitmap.prototype, "src", {
-            set: function (value) {
-                this._src = value;
-                this.isLoaded = false;
-                /**image没有读取，不起作用*/
-                // this.width = this.img.naturalWidth;
-                // this.height = this.img.naturalHeight;
-            },
-            enumerable: true,
-            configurable: true
-        });
+        // public _src = "";
+        // set src(value: string) {
+        //     this._src = value;
+        //     this.isLoaded = false;
+        //     /**image没有读取，不起作用*/
+        //     // this.width = this.img.naturalWidth;
+        //     // this.height = this.img.naturalHeight;
+        // }
         // render(canvas: CanvasRenderingContext2D) {
         //     if (this.isLoaded) {
         //         //  console.log(this.x);
@@ -1390,9 +1392,9 @@ var engine;
         var context2d = canvas.getContext("2d");
         var stage = new engine.Stage(context2d);
         var canvasRenderer = new engine.CanvasRenderer(stage, context2d);
-        engine.RES.load();
         var lastNow = Date.now();
         var enterFrame = function (callback) {
+            engine.RES.load();
             var now = Date.now();
             var deltaTime = now - lastNow;
             eventDispose();

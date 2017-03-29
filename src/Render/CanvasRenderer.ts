@@ -34,18 +34,20 @@ namespace engine {
         }
         
         renderBitmap(bitmap: Bitmap) {
-            this.context2D.drawImage(bitmap.img, 0, 0);
-            if (bitmap.isLoaded) {
-                this.context2D.drawImage(bitmap.img, 0, 0, bitmap.img.width, bitmap.img.height);
+            // this.context2D.drawImage(bitmap.img.bitmapData, 0, 0);
+             console.log("in render bitmap");
+            if (bitmap.img.isLoaded) {
+                this.context2D.drawImage(bitmap.img.bitmapData, 0, 0, bitmap.img.width, bitmap.img.height);
+                console.log("render bitmap");
             }
             else {
-                bitmap.img.src = bitmap._src;
+                // bitmap.img.bitmapData.src = bitmap._src;
                 if (bitmap.width == 0)
-                    bitmap.width = bitmap.img.naturalWidth;
+                    bitmap.width = bitmap.img.width;
                 if (bitmap.height == 0)
-                    bitmap.height = bitmap.img.naturalHeight;
-                bitmap.img.onload = () => {
-                    bitmap.isLoaded = true;
+                    bitmap.height = bitmap.img.height;
+                bitmap.img.bitmapData.onload = () => {
+                    bitmap.img.isLoaded = true;
                 }
             }
         }

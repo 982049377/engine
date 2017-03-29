@@ -5,10 +5,9 @@ namespace engine {
         var context2d = canvas.getContext("2d");
         var stage = new Stage(context2d);
         var canvasRenderer = new CanvasRenderer(stage, context2d);
-        engine.RES.load();
-        
         let lastNow = Date.now();
         let enterFrame = (callback) => {
+            engine.RES.load();
             let now = Date.now();
             var deltaTime = now - lastNow;
             eventDispose();
@@ -20,7 +19,6 @@ namespace engine {
             stage.update();
             canvasRenderer.render();
             context2d.restore();
-
             lastNow = now;
             window.requestAnimationFrame(enterFrame);;
         }
