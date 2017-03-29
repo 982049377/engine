@@ -1,7 +1,17 @@
 declare namespace engine.RES {
-    function getRes(name: string): any;
-    function loadRes(name: any): void;
+    function getRes(name: string): ImageResource;
+    function loadRes(name: any): ImageResource;
     function loadConfig(): void;
+    function addImageJson(name: string, url: string, width: number, height: number): void;
+    class ImageResource {
+        width: number;
+        height: number;
+        bitmapData: HTMLImageElement;
+        private static loadImage;
+        private url;
+        constructor(name: string);
+        load(): void;
+    }
 }
 declare namespace engine {
     class CanvasRenderer {

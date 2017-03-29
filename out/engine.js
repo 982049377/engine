@@ -12,6 +12,9 @@ var engine;
 (function (engine) {
     var RES;
     (function (RES) {
+        var ImageJson = [
+            { name: "loading", url: "loading.png", width: 200, height: 200 },
+        ];
         var __cache = {};
         function getRes(name) {
             if (__cache[name]) {
@@ -26,6 +29,7 @@ var engine;
         function loadRes(name) {
             var resource = getRes(name);
             resource.load();
+            return resource;
         }
         RES.loadRes = loadRes;
         function loadConfig() {
@@ -34,13 +38,36 @@ var engine;
             }
         }
         RES.loadConfig = loadConfig;
+        function addImageJson(name, url, width, height) {
+            ImageJson.forEach(function (element) {
+                if (element.name == name)
+                    return;
+            });
+            var tempElement = { name: name, url: url, width: width, height: height };
+            ImageJson.push(tempElement);
+        }
+        RES.addImageJson = addImageJson;
         var ImageResource = (function () {
-            function ImageResource(url) {
+            function ImageResource(name) {
+                var _this = this;
                 this.width = 0;
                 this.height = 0;
-                this.url = url;
-                this.bitmapData = document.createElement("img");
-                this.bitmapData.src = "loading";
+                ImageJson.forEach(function (element) {
+                    if (element.name == name) {
+                        _this.width = element.width;
+                        _this.height = element.height;
+                        _this.url = element.url;
+                    }
+                });
+                // // this.url = url;
+                // this.bitmapData = document.createElement("img");
+                // ImageResource.loadImage = document.createElement("img");
+                // ImageResource.loadImage.src = "loading.png";
+                // console.log(ImageResource.loadImage.src);
+                // ImageResource.loadImage.onload = () => {
+                //     this.bitmapData = ImageResource.loadImage;
+                // }
+                // this.bitmapData = ImageResource.loadImage;
             }
             ImageResource.prototype.load = function () {
                 var _this = this;
@@ -52,6 +79,7 @@ var engine;
             };
             return ImageResource;
         }());
+        RES.ImageResource = ImageResource;
     })(RES = engine.RES || (engine.RES = {}));
 })(engine || (engine = {}));
 var engine;
