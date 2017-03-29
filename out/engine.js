@@ -32,12 +32,12 @@ var engine;
             return resource;
         }
         RES.loadRes = loadRes;
-        function loadConfig() {
+        function load() {
             for (var index in __cache) {
                 __cache[index].load();
             }
         }
-        RES.loadConfig = loadConfig;
+        RES.load = load;
         function addImageJson(name, url, width, height) {
             ImageJson.forEach(function (element) {
                 if (element.name == name)
@@ -62,7 +62,7 @@ var engine;
                 // // this.url = url;
                 this.bitmapData = document.createElement("img");
                 ImageResource.loadImage = document.createElement("img");
-                ImageResource.loadImage.src = "../../loading.png";
+                ImageResource.loadImage.src = "loading.png";
                 console.log(ImageResource.loadImage.src);
                 ImageResource.loadImage.onload = function () {
                     _this.bitmapData = ImageResource.loadImage;
@@ -1390,6 +1390,7 @@ var engine;
         var context2d = canvas.getContext("2d");
         var stage = new engine.Stage(context2d);
         var canvasRenderer = new engine.CanvasRenderer(stage, context2d);
+        engine.RES.load();
         var lastNow = Date.now();
         var enterFrame = function (callback) {
             var now = Date.now();

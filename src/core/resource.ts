@@ -20,7 +20,7 @@ namespace engine.RES {
         return resource;
     }
 
-    export function loadConfig() {
+    export function load() {
         for (var index in __cache) {
             __cache[index].load();
         }
@@ -55,7 +55,7 @@ namespace engine.RES {
             // // this.url = url;
             this.bitmapData = document.createElement("img");
             ImageResource.loadImage = document.createElement("img");
-            ImageResource.loadImage.src = "../../loading.png";
+            ImageResource.loadImage.src = "loading.png";
             console.log(ImageResource.loadImage.src);
             ImageResource.loadImage.onload = () => {
                 this.bitmapData = ImageResource.loadImage;

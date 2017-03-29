@@ -32,7 +32,7 @@ namespace engine {
                 // console.log(child.type + this.context2D.globalAlpha);
             }
         }
-
+        
         renderBitmap(bitmap: Bitmap) {
             this.context2D.drawImage(bitmap.img, 0, 0);
             if (bitmap.isLoaded) {

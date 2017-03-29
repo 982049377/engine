@@ -1,7 +1,7 @@
 declare namespace engine.RES {
     function getRes(name: string): ImageResource;
     function loadRes(name: any): ImageResource;
-    function loadConfig(): void;
+    function load(): void;
     function addImageJson(name: string, url: string, width: number, height: number): void;
     class ImageResource {
         width: number;

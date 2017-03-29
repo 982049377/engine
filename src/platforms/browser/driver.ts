@@ -5,7 +5,8 @@ namespace engine {
         var context2d = canvas.getContext("2d");
         var stage = new Stage(context2d);
         var canvasRenderer = new CanvasRenderer(stage, context2d);
-
+        engine.RES.load();
+        
         let lastNow = Date.now();
         let enterFrame = (callback) => {
             let now = Date.now();
