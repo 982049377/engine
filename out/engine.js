@@ -60,14 +60,14 @@ var engine;
                     }
                 });
                 // // this.url = url;
-                // this.bitmapData = document.createElement("img");
-                // ImageResource.loadImage = document.createElement("img");
-                // ImageResource.loadImage.src = "loading.png";
-                // console.log(ImageResource.loadImage.src);
-                // ImageResource.loadImage.onload = () => {
-                //     this.bitmapData = ImageResource.loadImage;
-                // }
-                // this.bitmapData = ImageResource.loadImage;
+                this.bitmapData = document.createElement("img");
+                ImageResource.loadImage = document.createElement("img");
+                ImageResource.loadImage.src = "../../loading.png";
+                console.log(ImageResource.loadImage.src);
+                ImageResource.loadImage.onload = function () {
+                    _this.bitmapData = ImageResource.loadImage;
+                };
+                this.bitmapData = ImageResource.loadImage;
             }
             ImageResource.prototype.load = function () {
                 var _this = this;
