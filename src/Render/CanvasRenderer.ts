@@ -35,10 +35,10 @@ namespace engine {
         
         renderBitmap(bitmap: Bitmap) {
             // this.context2D.drawImage(bitmap.img.bitmapData, 0, 0);
-             console.log("in render bitmap");
+            //  console.log("in render bitmap");
             if (bitmap.img.isLoaded) {
                 this.context2D.drawImage(bitmap.img.bitmapData, 0, 0, bitmap.img.width, bitmap.img.height);
-                console.log("render bitmap");
+                // console.log("render bitmap");
             }
             else {
                 // bitmap.img.bitmapData.src = bitmap._src;

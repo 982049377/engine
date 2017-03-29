@@ -9,6 +9,7 @@ declare namespace engine.RES {
         isLoaded: boolean;
         bitmapData: HTMLImageElement;
         private static loadImage;
+        private static loadImageIsLoad;
         private url;
         constructor(id: string);
         load(): void;

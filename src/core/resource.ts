@@ -45,6 +45,7 @@ namespace engine.RES {
 
         bitmapData: HTMLImageElement;
         private static loadImage: HTMLImageElement;
+        private static loadImageIsLoad = false;
         private url: string;
         constructor(id: string) {
             ImageJson.forEach(element => {
@@ -52,17 +53,25 @@ namespace engine.RES {
                     this.width = element.width;
                     this.height = element.height;
                     this.url = element.url;
+                    this.isLoaded = false;
                 }
             });
+            if (this.width == 0 && this.height == 0) {
+                console.error("没有所需的Json数据文件");
+                return;
+            }
             // // this.url = url;
             this.bitmapData = document.createElement("img");
-            // ImageResource.loadImage = document.createElement("img");
-            // ImageResource.loadImage.src = "..\..\loading.png";
-            // console.log(ImageResource.loadImage.src);
-            // ImageResource.loadImage.onload = () => {
-            //     this.bitmapData = ImageResource.loadImage;
-            // }
-            // this.bitmapData = ImageResource.loadImage;
+            if (ImageResource.loadImageIsLoad == false) {
+                ImageResource.loadImage = document.createElement("img");
+                ImageResource.loadImage.src = "..\..\loading.png";
+                console.log(ImageResource.loadImage.src);
+                ImageResource.loadImage.onload = () => {
+                    this.bitmapData = ImageResource.loadImage;
+                    ImageResource.loadImageIsLoad = true;
+                }
+            } else
+                this.bitmapData = ImageResource.loadImage;
             this.load();
         }
         load() {

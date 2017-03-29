@@ -58,17 +58,26 @@ var engine;
                         _this.width = element.width;
                         _this.height = element.height;
                         _this.url = element.url;
+                        _this.isLoaded = false;
                     }
                 });
+                if (this.width == 0 && this.height == 0) {
+                    console.error("没有所需的Json数据文件");
+                    return;
+                }
                 // // this.url = url;
                 this.bitmapData = document.createElement("img");
-                // ImageResource.loadImage = document.createElement("img");
-                // ImageResource.loadImage.src = "..\..\loading.png";
-                // console.log(ImageResource.loadImage.src);
-                // ImageResource.loadImage.onload = () => {
-                //     this.bitmapData = ImageResource.loadImage;
-                // }
-                // this.bitmapData = ImageResource.loadImage;
+                if (ImageResource.loadImageIsLoad == false) {
+                    ImageResource.loadImage = document.createElement("img");
+                    ImageResource.loadImage.src = "..\..\loading.png";
+                    console.log(ImageResource.loadImage.src);
+                    ImageResource.loadImage.onload = function () {
+                        _this.bitmapData = ImageResource.loadImage;
+                        ImageResource.loadImageIsLoad = true;
+                    };
+                }
+                else
+                    this.bitmapData = ImageResource.loadImage;
                 this.load();
             }
             ImageResource.prototype.load = function () {
@@ -82,6 +91,7 @@ var engine;
             };
             return ImageResource;
         }());
+        ImageResource.loadImageIsLoad = false;
         RES.ImageResource = ImageResource;
     })(RES = engine.RES || (engine.RES = {}));
 })(engine || (engine = {}));
@@ -120,10 +130,10 @@ var engine;
         };
         CanvasRenderer.prototype.renderBitmap = function (bitmap) {
             // this.context2D.drawImage(bitmap.img.bitmapData, 0, 0);
-            console.log("in render bitmap");
+            //  console.log("in render bitmap");
             if (bitmap.img.isLoaded) {
                 this.context2D.drawImage(bitmap.img.bitmapData, 0, 0, bitmap.img.width, bitmap.img.height);
-                console.log("render bitmap");
+                // console.log("render bitmap");
             }
             else {
                 // bitmap.img.bitmapData.src = bitmap._src;
