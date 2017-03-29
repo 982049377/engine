@@ -1,8 +1,8 @@
 {
 	"compilerOptions": {
 		"target": "es5",
-		"sourceMap": true, //断点用的 
-		"out": "./out/engine.js",
+		"sourceMap": false, //断点用的 
+		"outFile": "./out/engine.js",
 		// "outDir":"./out",
 		"declaration": true
 	},

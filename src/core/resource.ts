@@ -64,7 +64,7 @@ namespace engine.RES {
             this.bitmapData = document.createElement("img");
             if (ImageResource.loadImageIsLoad == false) {
                 ImageResource.loadImage = document.createElement("img");
-                ImageResource.loadImage.src = "..\..\loading.png";
+                ImageResource.loadImage.src = "loading.png";
                 console.log(ImageResource.loadImage.src);
                 ImageResource.loadImage.onload = () => {
                     this.bitmapData = ImageResource.loadImage;
