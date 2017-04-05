@@ -2,9 +2,10 @@ namespace engine {
     export class Bitmap extends DisplayObject {
         public img: engine.RES.ImageResource = null;
         // public isLoaded = false;
-        constructor(name: string) {
+        constructor(name?: string) {
             super("Bitmap");
-            this.img = engine.RES.getRes(name);
+            if (name)
+                this.img = engine.RES.getRes(name);
             // this.img = document.createElement("img");
         }
         // public _src = "";

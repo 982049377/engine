@@ -10,6 +10,93 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var engine;
 (function (engine) {
+    var res;
+    (function (res) {
+        var ImageProcessor = (function () {
+            function ImageProcessor() {
+            }
+            ImageProcessor.prototype.load = function (url, callback) {
+                var image = document.createElement("img");
+                image.src = url;
+                image.onload = function () {
+                    callback();
+                    return image;
+                };
+            };
+            return ImageProcessor;
+        }());
+        res.ImageProcessor = ImageProcessor;
+        var TextProcessor = (function () {
+            function TextProcessor() {
+            }
+            TextProcessor.prototype.load = function (url, callback) {
+                var xhr = new XMLHttpRequest();
+                xhr.open("get", url);
+                xhr.send();
+                xhr.onload = function () {
+                    callback(xhr.responseText);
+                    return xhr;
+                };
+            };
+            return TextProcessor;
+        }());
+        res.TextProcessor = TextProcessor;
+        function mapTypeSelector(typeSelector) {
+            getTypeByURL = typeSelector;
+        }
+        res.mapTypeSelector = mapTypeSelector;
+        var cache = {};
+        function load(url, callback) {
+            var type = getTypeByURL(url);
+            var processor = createProcessor(type);
+            if (processor != null) {
+                processor.load(url, function (data) {
+                    cache[url] = data;
+                    callback(data);
+                });
+            }
+        }
+        res.load = load;
+        function get(url) {
+            return cache[url];
+        }
+        res.get = get;
+        var getTypeByURL = function (url) {
+            if (url.indexOf(".jpg") >= 0) {
+                return "image";
+            }
+            else if (url.indexOf(".mp3") >= 0) {
+                return "sound";
+            }
+            else if (url.indexOf(".json") >= 0) {
+                return "text";
+            }
+        };
+        var hashMap = {
+            "image": new ImageProcessor(),
+            "text": new TextProcessor()
+        };
+        function createProcessor(type) {
+            var processor = hashMap[type];
+            return processor;
+        }
+        function map(type, processor) {
+            hashMap[type] = processor;
+        }
+        res.map = map;
+    })(res = engine.res || (engine.res = {}));
+})(engine || (engine = {}));
+//  class SoundProcessor implements Processor {
+//         load(url: string, callback: Function) { }
+//     }
+//     mapTypeSelector((url) => {
+//         return "image";
+//     })
+//     map("sound", new SoundProcessor())
+//     load("1.mp3", () => {
+//     }) 
+var engine;
+(function (engine) {
     var RES;
     (function (RES) {
         var ImageJson = [
@@ -1305,7 +1392,8 @@ var engine;
         function Bitmap(name) {
             var _this = _super.call(this, "Bitmap") || this;
             _this.img = null;
-            _this.img = engine.RES.getRes(name);
+            if (name)
+                _this.img = engine.RES.getRes(name);
             return _this;
             // this.img = document.createElement("img");
         }
@@ -1522,4 +1610,3 @@ var engine;
     }
     engine.run = run;
 })(engine || (engine = {}));
-//# sourceMappingURL=engine.js.map

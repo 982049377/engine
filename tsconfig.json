@@ -11,6 +11,7 @@
 	// 	"out"
 	// ]
 	"files": [
+		"src/core/res.ts",
 		"src/core/resource.ts",
 		"src/Render/CanvasRenderer.ts",
 		"src/core/tween.ts",
