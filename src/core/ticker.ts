@@ -43,4 +43,7 @@ namespace engine {
     export function getTimer():number {
         return Date.now();
     }
+    export function MysetTimeout(func:Function,time:number){
+        setTimeout(func,time);
+    }
 }

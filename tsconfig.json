@@ -11,9 +11,9 @@
 	// 	"out"
 	// ]
 	"files": [
-		"src/core/res.ts",
-		"src/core/resource.ts",
-		"src/Render/CanvasRenderer.ts",
+		"src/core/ResourceLoad.ts",
+		"src/core/ResourceManager.ts",
+		"src/platforms/browser/Render/CanvasRenderer.ts",
 		"src/core/tween.ts",
 		"src/core/event.ts",
 		"src/core/ticker.ts",

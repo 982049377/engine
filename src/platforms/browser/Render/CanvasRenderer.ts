@@ -32,24 +32,28 @@ namespace engine {
                 // console.log(child.type + this.context2D.globalAlpha);
             }
         }
-        
+
         renderBitmap(bitmap: Bitmap) {
-            // this.context2D.drawImage(bitmap.img.bitmapData, 0, 0);
-            //  console.log("in render bitmap");
+            if (bitmap.img.bitmapData == undefined) {
+                bitmap.img.load();
+                console.log(bitmap.img.id);
+                console.log(bitmap.img.bitmapData);
+                return;
+            }
+            // console.log(engine.ResourceLoad.get("!"));
             if (bitmap.img.isLoaded) {
                 this.context2D.drawImage(bitmap.img.bitmapData, 0, 0, bitmap.img.width, bitmap.img.height);
-                // console.log("render bitmap");
             }
-            else {
-                // bitmap.img.bitmapData.src = bitmap._src;
-                if (bitmap.width == 0)
-                    bitmap.width = bitmap.img.width;
-                if (bitmap.height == 0)
-                    bitmap.height = bitmap.img.height;
-                bitmap.img.bitmapData.onload = () => {
-                    bitmap.img.isLoaded = true;
-                }
-            }
+            // else {
+            //     // bitmap.img.bitmapData.src = bitmap._src;
+            //     if (bitmap.width == 0)
+            //         bitmap.width = bitmap.img.width;
+            //     if (bitmap.height == 0)
+            //         bitmap.height = bitmap.img.height;
+            //     bitmap.img.bitmapData.onload = () => {
+            //         bitmap.img.isLoaded = true;
+            //     }
+            // }
         }
 
         renderTextField(textField: TextField) {

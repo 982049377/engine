@@ -1,4 +1,4 @@
-declare namespace engine.res {
+declare namespace engine.ResourceLoad {
     interface Processor {
         load(url: string, callback: Function): void;
     }
@@ -9,11 +9,11 @@ declare namespace engine.res {
         load(url: string, callback: Function): void;
     }
     function mapTypeSelector(typeSelector: (url: string) => string): void;
-    function load(url: string, callback: (data: any) => void): void;
+    function load(url: string, callback: (data: any) => void): any;
     function get(url: string): any;
     function map(type: string, processor: Processor): void;
 }
-declare namespace engine.RES {
+declare namespace engine.ResourceManager {
     function getRes(id: string): ImageResource;
     function loadRes(id: any): ImageResource;
     function load(): void;
@@ -21,6 +21,7 @@ declare namespace engine.RES {
     class ImageResource {
         width: number;
         height: number;
+        id: string;
         isLoaded: boolean;
         bitmapData: HTMLImageElement;
         private static loadImage;
@@ -449,6 +450,7 @@ declare namespace engine {
     function startTick(func: Function): void;
     function stopTick(func: Function): void;
     function getTimer(): number;
+    function MysetTimeout(func: Function, time: number): void;
 }
 declare namespace math {
     class Point {
@@ -504,6 +506,7 @@ declare namespace engine {
         update(): void;
         abstract hitTest(x: number, y: number): any;
         touchEnable: boolean;
+        touchChildren: boolean;
         $dispatchPropagationEvent(Chain: DisplayObject[], touchEvent: MyTouchEvent, isCapture?: boolean): void;
         dispatchEvent(event: Event): void;
         listenerList: EventListen[];
@@ -536,8 +539,9 @@ declare namespace engine {
 }
 declare namespace engine {
     class Bitmap extends DisplayObject {
-        img: engine.RES.ImageResource;
-        constructor(name?: string);
+        img: engine.ResourceManager.ImageResource;
+        constructor(id?: string);
+        src: string;
         hitTest(x: number, y: number): this;
     }
 }

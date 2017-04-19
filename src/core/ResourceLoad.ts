@@ -1,25 +1,19 @@
-namespace engine.res {
+//ResourceManager是将资源加载到内存中，RES是加入到舞台。
 
-
-
+namespace engine.ResourceLoad {
     export interface Processor {
-
         load(url: string, callback: Function): void;
-
     }
-
     export class ImageProcessor implements Processor {
-
         load(url: string, callback: Function) {
             let image = document.createElement("img");
             image.src = url;
+            // console.log(url);
             image.onload = () => {
                 callback();
-                return image;
             }
         }
     }
-
     export class TextProcessor implements Processor {
         load(url: string, callback: Function) {
             var xhr = new XMLHttpRequest();
@@ -27,34 +21,31 @@ namespace engine.res {
             xhr.send();
             xhr.onload = () => {
                 callback(xhr.responseText);
-                return xhr;
             }
         }
     }
-
     export function mapTypeSelector(typeSelector: (url: string) => string) {
         getTypeByURL = typeSelector;
     }
-
     var cache = {};
-
-    export function load(url: string, callback: (data: any) => void) {
+    export function load(url: string, callback: (data: any) => void):any {
         let type = getTypeByURL(url);
         let processor = createProcessor(type);
         if (processor != null) {
-            processor.load(url, (data) => {
+           processor.load(url, (data) => {
                 cache[url] = data;
                 callback(data);
             });
         }
     }
-
     export function get(url: string): any {
         return cache[url];
     }
-
     var getTypeByURL = (url: string): string => {
         if (url.indexOf(".jpg") >= 0) {
+            return "image";
+        }
+        if (url.indexOf(".png") >= 0) {
             return "image";
         }
         else if (url.indexOf(".mp3") >= 0) {
@@ -64,7 +55,6 @@ namespace engine.res {
             return "text";
         }
     }
-
     let hashMap = {
         "image": new ImageProcessor(),
         "text": new TextProcessor()
@@ -73,7 +63,6 @@ namespace engine.res {
         let processor: Processor = hashMap[type];
         return processor;
     }
-
     export function map(type: string, processor: Processor) {
         hashMap[type] = processor;
     }

@@ -8,24 +8,25 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+//ResourceManager是将资源加载到内存中，RES是加入到舞台。
 var engine;
 (function (engine) {
-    var res;
-    (function (res) {
+    var ResourceLoad;
+    (function (ResourceLoad) {
         var ImageProcessor = (function () {
             function ImageProcessor() {
             }
             ImageProcessor.prototype.load = function (url, callback) {
                 var image = document.createElement("img");
                 image.src = url;
+                // console.log(url);
                 image.onload = function () {
                     callback();
-                    return image;
                 };
             };
             return ImageProcessor;
         }());
-        res.ImageProcessor = ImageProcessor;
+        ResourceLoad.ImageProcessor = ImageProcessor;
         var TextProcessor = (function () {
             function TextProcessor() {
             }
@@ -35,16 +36,15 @@ var engine;
                 xhr.send();
                 xhr.onload = function () {
                     callback(xhr.responseText);
-                    return xhr;
                 };
             };
             return TextProcessor;
         }());
-        res.TextProcessor = TextProcessor;
+        ResourceLoad.TextProcessor = TextProcessor;
         function mapTypeSelector(typeSelector) {
             getTypeByURL = typeSelector;
         }
-        res.mapTypeSelector = mapTypeSelector;
+        ResourceLoad.mapTypeSelector = mapTypeSelector;
         var cache = {};
         function load(url, callback) {
             var type = getTypeByURL(url);
@@ -56,13 +56,16 @@ var engine;
                 });
             }
         }
-        res.load = load;
+        ResourceLoad.load = load;
         function get(url) {
             return cache[url];
         }
-        res.get = get;
+        ResourceLoad.get = get;
         var getTypeByURL = function (url) {
             if (url.indexOf(".jpg") >= 0) {
+                return "image";
+            }
+            if (url.indexOf(".png") >= 0) {
                 return "image";
             }
             else if (url.indexOf(".mp3") >= 0) {
@@ -83,8 +86,8 @@ var engine;
         function map(type, processor) {
             hashMap[type] = processor;
         }
-        res.map = map;
-    })(res = engine.res || (engine.res = {}));
+        ResourceLoad.map = map;
+    })(ResourceLoad = engine.ResourceLoad || (engine.ResourceLoad = {}));
 })(engine || (engine = {}));
 //  class SoundProcessor implements Processor {
 //         load(url: string, callback: Function) { }
@@ -97,10 +100,10 @@ var engine;
 //     }) 
 var engine;
 (function (engine) {
-    var RES;
-    (function (RES) {
+    var ResourceManager;
+    (function (ResourceManager) {
         var ImageJson = [
-            { id: "loading", url: "loading.png", width: 200, height: 200 },
+            { id: "loading.png", url: "loading.png", width: 200, height: 200 },
         ];
         var __cache = {};
         function getRes(id) {
@@ -112,19 +115,19 @@ var engine;
                 return __cache[id];
             }
         }
-        RES.getRes = getRes;
+        ResourceManager.getRes = getRes;
         function loadRes(id) {
             var resource = getRes(id);
             resource.load();
             return resource;
         }
-        RES.loadRes = loadRes;
+        ResourceManager.loadRes = loadRes;
         function load() {
             for (var index in __cache) {
                 __cache[index].load();
             }
         }
-        RES.load = load;
+        ResourceManager.load = load;
         function addImageJson(id, url, width, height) {
             ImageJson.forEach(function (element) {
                 if (element.id == id)
@@ -133,7 +136,7 @@ var engine;
             var tempElement = { id: id, url: url, width: width, height: height };
             ImageJson.push(tempElement);
         }
-        RES.addImageJson = addImageJson;
+        ResourceManager.addImageJson = addImageJson;
         var ImageResource = (function () {
             function ImageResource(id) {
                 var _this = this;
@@ -142,6 +145,7 @@ var engine;
                 this.isLoaded = false;
                 ImageJson.forEach(function (element) {
                     if (element.id == id) {
+                        _this.id = id;
                         _this.width = element.width;
                         _this.height = element.height;
                         _this.url = element.url;
@@ -154,6 +158,12 @@ var engine;
                 }
                 // // this.url = url;
                 this.bitmapData = document.createElement("img");
+                if (engine.ResourceLoad.get("loading.png") != null && !ImageResource.loadImageIsLoad) {
+                    this.bitmapData = engine.ResourceLoad.get("loading.png");
+                    ImageResource.loadImageIsLoad = true;
+                    this.load();
+                    return;
+                }
                 if (ImageResource.loadImageIsLoad == false) {
                     ImageResource.loadImage = document.createElement("img");
                     ImageResource.loadImage.src = "loading.png";
@@ -169,6 +179,11 @@ var engine;
             }
             ImageResource.prototype.load = function () {
                 var _this = this;
+                if (engine.ResourceLoad.get(this.id) != null) {
+                    this.bitmapData = engine.ResourceLoad.get(this.id);
+                    this.isLoaded = true;
+                    return;
+                }
                 var realResource = document.createElement("img");
                 realResource.src = this.url;
                 realResource.onload = function () {
@@ -179,8 +194,8 @@ var engine;
             return ImageResource;
         }());
         ImageResource.loadImageIsLoad = false;
-        RES.ImageResource = ImageResource;
-    })(RES = engine.RES || (engine.RES = {}));
+        ResourceManager.ImageResource = ImageResource;
+    })(ResourceManager = engine.ResourceManager || (engine.ResourceManager = {}));
 })(engine || (engine = {}));
 var engine;
 (function (engine) {
@@ -216,22 +231,26 @@ var engine;
             }
         };
         CanvasRenderer.prototype.renderBitmap = function (bitmap) {
-            // this.context2D.drawImage(bitmap.img.bitmapData, 0, 0);
-            //  console.log("in render bitmap");
+            if (bitmap.img.bitmapData == undefined) {
+                bitmap.img.load();
+                console.log(bitmap.img.id);
+                console.log(bitmap.img.bitmapData);
+                return;
+            }
+            // console.log(engine.ResourceLoad.get("!"));
             if (bitmap.img.isLoaded) {
                 this.context2D.drawImage(bitmap.img.bitmapData, 0, 0, bitmap.img.width, bitmap.img.height);
-                // console.log("render bitmap");
             }
-            else {
-                // bitmap.img.bitmapData.src = bitmap._src;
-                if (bitmap.width == 0)
-                    bitmap.width = bitmap.img.width;
-                if (bitmap.height == 0)
-                    bitmap.height = bitmap.img.height;
-                bitmap.img.bitmapData.onload = function () {
-                    bitmap.img.isLoaded = true;
-                };
-            }
+            // else {
+            //     // bitmap.img.bitmapData.src = bitmap._src;
+            //     if (bitmap.width == 0)
+            //         bitmap.width = bitmap.img.width;
+            //     if (bitmap.height == 0)
+            //         bitmap.height = bitmap.img.height;
+            //     bitmap.img.bitmapData.onload = () => {
+            //         bitmap.img.isLoaded = true;
+            //     }
+            // }
         };
         CanvasRenderer.prototype.renderTextField = function (textField) {
             this.context2D.fillStyle = textField.color;
@@ -1073,6 +1092,10 @@ var engine;
         return Date.now();
     }
     engine.getTimer = getTimer;
+    function MysetTimeout(func, time) {
+        setTimeout(func, time);
+    }
+    engine.MysetTimeout = MysetTimeout;
 })(engine || (engine = {}));
 var math;
 (function (math) {
@@ -1205,6 +1228,7 @@ var engine;
             this.matrix = new math.Matrix();
             this.localMatrix = new math.Matrix();
             this.touchEnable = false;
+            this.touchChildren = true;
             this.listenerList = [];
             this.type = type;
         }
@@ -1321,15 +1345,29 @@ var engine;
             var resultChain = [];
             for (var index = this.DisplayObjects.length - 1; index > -1; index--) {
                 var child = this.DisplayObjects[index];
-                if (child.touchEnable) {
+                if (child.type == "DisplayObjectContainer" && child.touchChildren) {
+                    var tempChain = [];
+                    tempChain = child.hitTest(x, y);
+                    if (resultChain == null)
+                        resultChain = tempChain;
+                    else
+                        resultChain = resultChain.concat(tempChain);
+                    if (resultChain.length != 0) {
+                        resultChain.push(this);
+                        break;
+                    }
+                    continue;
+                }
+                if (child.touchEnable || child.parent.touchChildren) {
                     var result = child.hitTest(x, y);
                     if (result != null)
                         resultChain.push(result);
                 }
             }
-            if (resultChain != null)
-                resultChain.push(this);
-            return resultChain;
+            if (resultChain.length > 0)
+                return resultChain;
+            else
+                return [];
         };
         DisplayObjectContainer.prototype.dispatchEvent = function (event) {
             this.DisplayObjects.forEach(function (child) {
@@ -1389,14 +1427,21 @@ var engine;
     var Bitmap = (function (_super) {
         __extends(Bitmap, _super);
         // public isLoaded = false;
-        function Bitmap(name) {
+        function Bitmap(id) {
             var _this = _super.call(this, "Bitmap") || this;
             _this.img = null;
-            if (name)
-                _this.img = engine.RES.getRes(name);
+            if (id)
+                _this.img = engine.ResourceManager.getRes(id);
             return _this;
             // this.img = document.createElement("img");
         }
+        Object.defineProperty(Bitmap.prototype, "src", {
+            set: function (id) {
+                this.img = engine.ResourceManager.getRes(id);
+            },
+            enumerable: true,
+            configurable: true
+        });
         // public _src = "";
         // set src(value: string) {
         //     this._src = value;
@@ -1492,7 +1537,7 @@ var engine;
         var canvasRenderer = new engine.CanvasRenderer(stage, context2d);
         var lastNow = Date.now();
         var enterFrame = function (callback) {
-            engine.RES.load();
+            engine.ResourceManager.load();
             var now = Date.now();
             var deltaTime = now - lastNow;
             eventDispose();
@@ -1509,6 +1554,8 @@ var engine;
             ;
         };
         window.requestAnimationFrame(enterFrame);
+        engine.ResourceLoad.load("loading.png", function () {
+        });
         //事件处理机制
         function eventDispose() {
             var event = new engine.Event(engine.Event.ENTER_FRAME);
@@ -1536,29 +1583,29 @@ var engine;
                 // stage.dispatchEvent(upChain, touchEvent);
             };
         };
-        window.onmousedown = function (down) {
-            ifMouseDown = true;
-            var downX = down.x - 3;
-            var downY = down.y - 3;
-            var touchEvent = new engine.MyTouchEvent(downX, downY, engine.MyTouchEvent.TouchDown);
-            var downChain = stage.hitTest(downX, downY);
-            // stage.$dispatchPropagationEvent(downChain, touchEvent, true);
-            // stage.dispatchEvent(downChain, touchEvent);
-            window.onmouseup = function (up) {
-                ifMouseDown = false;
-                var upX = down.x - 3;
-                var upY = down.y - 3;
-                var upChain = stage.hitTest(upX, upY);
-                if (downChain[0] == upChain[0]) {
-                    var touchEvent = new engine.MyTouchEvent(downX, downY, engine.MyTouchEvent.TouchClick);
-                    var ChickChain = stage.hitTest(upX, upY);
-                    stage.$dispatchPropagationEvent(ChickChain, touchEvent, true);
-                    // stage.dispatchEvent(ChickChain, touchEvent);
-                }
-                stage.$dispatchPropagationEvent(upChain, touchEvent, true);
-                // stage.dispatchEvent(upChain, touchEvent);
-            };
-        };
+        // window.onmousedown = (down) => {
+        //     ifMouseDown = true;
+        //     var downX = down.x - 3;
+        //     var downY = down.y - 3;
+        //     var touchEvent = new MyTouchEvent(downX, downY, MyTouchEvent.TouchDown);
+        //     var downChain = stage.hitTest(downX, downY);
+        //     // stage.$dispatchPropagationEvent(downChain, touchEvent, true);
+        //     // stage.dispatchEvent(downChain, touchEvent);
+        //     window.onmouseup = (up) => {
+        //         ifMouseDown = false;
+        //         var upX = down.x - 3;
+        //         var upY = down.y - 3;
+        //         var upChain = stage.hitTest(upX, upY);
+        //         if (downChain[0] == upChain[0]) {
+        //             var touchEvent = new MyTouchEvent(downX, downY, MyTouchEvent.TouchClick);
+        //             var ChickChain = stage.hitTest(upX, upY);
+        //             stage.$dispatchPropagationEvent(ChickChain, touchEvent, true);
+        //             // stage.dispatchEvent(ChickChain, touchEvent);
+        //         }
+        //         stage.$dispatchPropagationEvent(upChain, touchEvent, true);
+        //         // stage.dispatchEvent(upChain, touchEvent);
+        //     }
+        // }
         var clickResult;
         var currentX;
         var currentY;

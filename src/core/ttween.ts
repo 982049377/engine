@@ -26,19 +26,30 @@ namespace engine {
             }
             return o;
         }
-
+private duration;
         public to(props: any, duration?: number) {
             if (isNaN(duration) || duration < 0) {
                 duration = 0;
             }
+            this.duration = duration;
             var p0 = this._cloneProps(this._curQueueProps);
             var p1 = this._cloneProps(this._appendQueueProps(props));
-            this._addStep({ d: duration || 0, p0, p1 });
+            this._addStep({ during: duration || 0, p0, p1 });
             return this.set(props);
         }
 
+        private _addStep(o): Twween {
+            if (o.during > 0) {
+                o.type = "step";
+                this._steps.push(o);
+                o.t = this.duration;
+                this.duration += o.during;
+            }
+            return this;
+        }
 
-        public _appendQueueProps(props:any){
+
+        public _appendQueueProps(props: any) {
             for (let n in props) {
                 this._curQueueProps[n] = props[n];
             }

@@ -38,15 +38,22 @@ namespace engine {
             var resultChain: DisplayObject[] = [];
             for (var index = this.DisplayObjects.length - 1; index > -1; index--) {
                 let child = this.DisplayObjects[index];
-                if (child.touchEnable) {
+                if (child.type == "DisplayObjectContainer" && child.touchChildren) {
+                    var tempChain: DisplayObject[] = [];
+                    tempChain = child.hitTest(x, y);
+                    if (resultChain == null) resultChain = tempChain;
+                    else resultChain = resultChain.concat(tempChain);
+                    if (resultChain.length != 0) { resultChain.push(this); break; }
+                    continue;
+                }
+                if (child.touchEnable || child.parent.touchChildren) {
                     var result = child.hitTest(x, y);
                     if (result != null)
                         resultChain.push(result);
                 }
             }
-            if (resultChain != null)
-                resultChain.push(this);
-            return resultChain;
+            if (resultChain.length > 0) return resultChain;
+            else return [];
         }
         dispatchEvent(event: Event) {
             this.DisplayObjects.forEach(child => {

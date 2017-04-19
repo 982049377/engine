@@ -55,7 +55,8 @@ namespace engine {
         // }
         // abstract render(canvas: CanvasRenderingContext2D);
         abstract hitTest(x: number, y: number);
-        touchEnable = false;
+        public touchEnable = false;
+        public touchChildren = true;
         //picture
         //  |---containner
         //          |-----stage

@@ -7,7 +7,7 @@ namespace engine {
         var canvasRenderer = new CanvasRenderer(stage, context2d);
         let lastNow = Date.now();
         let enterFrame = (callback) => {
-            engine.RES.load();
+            engine.ResourceManager.load();
             let now = Date.now();
             var deltaTime = now - lastNow;
             eventDispose();
@@ -24,7 +24,8 @@ namespace engine {
         }
         window.requestAnimationFrame(enterFrame);
 
-
+        engine.ResourceLoad.load("loading.png", () => {
+        });
 
         //事件处理机制
         function eventDispose() {
@@ -55,29 +56,29 @@ namespace engine {
             }
         }
 
-        window.onmousedown = (down) => {
-            ifMouseDown = true;
-            var downX = down.x - 3;
-            var downY = down.y - 3;
-            var touchEvent = new MyTouchEvent(downX, downY, MyTouchEvent.TouchDown);
-            var downChain = stage.hitTest(downX, downY);
-            // stage.$dispatchPropagationEvent(downChain, touchEvent, true);
-            // stage.dispatchEvent(downChain, touchEvent);
-            window.onmouseup = (up) => {
-                ifMouseDown = false;
-                var upX = down.x - 3;
-                var upY = down.y - 3;
-                var upChain = stage.hitTest(upX, upY);
-                if (downChain[0] == upChain[0]) {
-                    var touchEvent = new MyTouchEvent(downX, downY, MyTouchEvent.TouchClick);
-                    var ChickChain = stage.hitTest(upX, upY);
-                    stage.$dispatchPropagationEvent(ChickChain, touchEvent, true);
-                    // stage.dispatchEvent(ChickChain, touchEvent);
-                }
-                stage.$dispatchPropagationEvent(upChain, touchEvent, true);
-                // stage.dispatchEvent(upChain, touchEvent);
-            }
-        }
+        // window.onmousedown = (down) => {
+        //     ifMouseDown = true;
+        //     var downX = down.x - 3;
+        //     var downY = down.y - 3;
+        //     var touchEvent = new MyTouchEvent(downX, downY, MyTouchEvent.TouchDown);
+        //     var downChain = stage.hitTest(downX, downY);
+        //     // stage.$dispatchPropagationEvent(downChain, touchEvent, true);
+        //     // stage.dispatchEvent(downChain, touchEvent);
+        //     window.onmouseup = (up) => {
+        //         ifMouseDown = false;
+        //         var upX = down.x - 3;
+        //         var upY = down.y - 3;
+        //         var upChain = stage.hitTest(upX, upY);
+        //         if (downChain[0] == upChain[0]) {
+        //             var touchEvent = new MyTouchEvent(downX, downY, MyTouchEvent.TouchClick);
+        //             var ChickChain = stage.hitTest(upX, upY);
+        //             stage.$dispatchPropagationEvent(ChickChain, touchEvent, true);
+        //             // stage.dispatchEvent(ChickChain, touchEvent);
+        //         }
+        //         stage.$dispatchPropagationEvent(upChain, touchEvent, true);
+        //         // stage.dispatchEvent(upChain, touchEvent);
+        //     }
+        // }
 
         let clickResult: DisplayObject;
         let currentX: number;
