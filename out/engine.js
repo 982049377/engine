@@ -993,6 +993,47 @@ var engine;
 })(engine || (engine = {}));
 var engine;
 (function (engine) {
+    var Twween = (function () {
+        function Twween(target) {
+            var _this = this;
+            this.degrees = -1;
+            this.tick = function (deltaTime) {
+                // private tick(deltaTime) {
+                if (_this.degrees == -1) {
+                    _this.degrees = _this.time / deltaTime;
+                    _this.stoptimes = _this.degrees;
+                }
+                for (var property in _this.targetProperties) {
+                    _this.target[property] += _this.tempProperties[property] / _this.degrees;
+                }
+                _this.stoptimes--;
+                console.log(_this.stoptimes);
+                if (_this.stoptimes <= 0) {
+                    console.log("移除");
+                    engine.Ticker.Instance.unregister(_this.tick);
+                    _this.degrees = -1;
+                }
+            };
+            this.target = target;
+        }
+        Twween.get = function (target) {
+            return new Twween(target);
+        };
+        Twween.prototype.to = function (properties, time) {
+            this.time = time;
+            this.tempProperties = properties; //只为获得属性
+            this.targetProperties = properties;
+            for (var property in properties) {
+                this.tempProperties[property] = properties[property] - this.target[property];
+            }
+            engine.Ticker.Instance.register(this.tick);
+        };
+        return Twween;
+    }());
+    engine.Twween = Twween;
+})(engine || (engine = {}));
+var engine;
+(function (engine) {
     var Event = (function () {
         function Event(type, bubbles, cancelable) {
             this.bubbles = false;
@@ -1089,7 +1130,7 @@ var engine;
     }
     engine.stopTick = stopTick;
     function getTimer() {
-        return Date.now();
+        return 1000;
     }
     engine.getTimer = getTimer;
     function MysetTimeout(func, time) {
@@ -1269,7 +1310,7 @@ var engine;
                 bubbleDisplayObjects.forEach(function (displayObject) {
                     displayObject.listenerList.forEach(function (listen) {
                         if (touchEvent.type == listen.type && !listen.isCapture)
-                            listen.func();
+                            listen.func(touchEvent);
                     });
                 });
             }
@@ -1481,8 +1522,8 @@ var engine;
             rect.y = 0;
             // rect.width = this.img.width;
             // rect.height = this.img.height;
-            rect.width = this.width;
-            rect.height = this.height;
+            rect.width = this.img.width;
+            rect.height = this.img.height;
             if (rect.isPointInRectangle(pointInLocalMatrix))
                 return this;
             else
@@ -1565,6 +1606,7 @@ var engine;
         window.onmousedown = function (down) {
             var downX = down.x - 3;
             var downY = down.y - 3;
+            console.log("downX" + downX + "  " + "downY" + downY);
             var touchEvent = new engine.MyTouchEvent(downX, downY, engine.MyTouchEvent.TouchDown);
             var downChain = stage.hitTest(downX, downY);
             stage.$dispatchPropagationEvent(downChain, touchEvent, true);
@@ -1572,11 +1614,13 @@ var engine;
             window.onmouseup = function (up) {
                 var upX = down.x - 3;
                 var upY = down.y - 3;
+                console.log("upX" + upX + "  " + "upY" + upY);
                 var upChain = stage.hitTest(upX, upY);
                 if (downChain[0] == upChain[0]) {
                     var touchEvent = new engine.MyTouchEvent(downX, downY, engine.MyTouchEvent.TouchClick);
                     var ChickChain = stage.hitTest(upX, upY);
                     stage.$dispatchPropagationEvent(ChickChain, touchEvent, true);
+                    return;
                     // stage.dispatchEvent(ChickChain, touchEvent);
                 }
                 stage.$dispatchPropagationEvent(upChain, touchEvent, true);

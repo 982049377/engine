@@ -77,7 +77,7 @@ namespace engine {
                 bubbleDisplayObjects.forEach(displayObject => {
                     displayObject.listenerList.forEach(listen => {
                         if (touchEvent.type == listen.type && !listen.isCapture)//冒泡
-                            listen.func();
+                            listen.func(touchEvent);
                     });
                 });
             }

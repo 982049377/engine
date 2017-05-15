@@ -37,6 +37,7 @@ namespace engine {
         window.onmousedown = (down) => {
             var downX = down.x - 3;
             var downY = down.y - 3;
+            console.log("downX" + downX + "  " + "downY" + downY);
             var touchEvent = new MyTouchEvent(downX, downY, MyTouchEvent.TouchDown);
             var downChain = stage.hitTest(downX, downY);
             stage.$dispatchPropagationEvent(downChain, touchEvent, true);
@@ -44,11 +45,13 @@ namespace engine {
             window.onmouseup = (up) => {
                 var upX = down.x - 3;
                 var upY = down.y - 3;
+                console.log("upX" + upX + "  " + "upY" + upY);
                 var upChain = stage.hitTest(upX, upY);
                 if (downChain[0] == upChain[0]) {
                     var touchEvent = new MyTouchEvent(downX, downY, MyTouchEvent.TouchClick);
                     var ChickChain = stage.hitTest(upX, upY);
                     stage.$dispatchPropagationEvent(ChickChain, touchEvent, true);
+                    return;
                     // stage.dispatchEvent(ChickChain, touchEvent);
                 }
                 stage.$dispatchPropagationEvent(upChain, touchEvent, true);

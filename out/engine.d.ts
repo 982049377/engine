@@ -410,6 +410,20 @@ declare namespace engine {
     }
 }
 declare namespace engine {
+    class Twween {
+        target: DisplayObject;
+        constructor(target: DisplayObject);
+        static get(target: DisplayObject): Twween;
+        tempProperties: any;
+        targetProperties: any;
+        time: number;
+        degrees: number;
+        private stoptimes;
+        to(properties: any, time: number): void;
+        private tick;
+    }
+}
+declare namespace engine {
     class Event {
         type: string;
         target: any;

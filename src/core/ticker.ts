@@ -41,7 +41,7 @@ namespace engine {
         Ticker.Instance.unregister(func);
     }
     export function getTimer():number {
-        return Date.now();
+        return 1000;
     }
     export function MysetTimeout(func:Function,time:number){
         setTimeout(func,time);
