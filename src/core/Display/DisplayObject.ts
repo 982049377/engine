@@ -82,7 +82,7 @@ namespace engine {
                 });
             }
         }
-        dispatchEvent(event: Event) {
+        dispatchEvent=(event: Event)=> {
             this.listenerList.forEach(listen => {
                 if (listen.type == event.type) {
                     listen.func();

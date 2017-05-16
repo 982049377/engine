@@ -55,7 +55,7 @@ namespace engine {
             if (resultChain.length > 0) return resultChain;
             else return [];
         }
-        dispatchEvent(event: Event) {
+        dispatchEvent=(event: Event)=> {
             this.DisplayObjects.forEach(child => {
                 child.dispatchEvent(event);
             });

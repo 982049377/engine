@@ -8,9 +8,15 @@ namespace engine {
                 this.img = engine.ResourceManager.getRes(id);
             // this.img = document.createElement("img");
         }
-
-        public set src(id:string){
-             this.img = engine.ResourceManager.getRes(id);
+        // setx(targetx: number) {
+        //     this.x = targetx - this.img.bitmapData.width / 2;
+        // }
+        // sety(targety:number) {
+        //     this.y = targety - this.img.bitmapData.height / 2;
+        // }
+        public set src(id: string) {
+            this.img = engine.ResourceManager.getRes(id);
+            
         }
         // public _src = "";
         // set src(value: string) {

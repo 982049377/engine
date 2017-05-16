@@ -188,6 +188,8 @@ var engine;
                 realResource.src = this.url;
                 realResource.onload = function () {
                     _this.bitmapData = realResource;
+                    _this.width = realResource.width;
+                    _this.height = realResource.height;
                     _this.isLoaded = true;
                 };
             };
@@ -1255,6 +1257,7 @@ var engine;
 (function (engine) {
     var DisplayObject = (function () {
         function DisplayObject(type) {
+            var _this = this;
             this.x = 0;
             this.y = 0;
             this.scaleX = 1;
@@ -1270,6 +1273,13 @@ var engine;
             this.localMatrix = new math.Matrix();
             this.touchEnable = false;
             this.touchChildren = true;
+            this.dispatchEvent = function (event) {
+                _this.listenerList.forEach(function (listen) {
+                    if (listen.type == event.type) {
+                        listen.func();
+                    }
+                });
+            };
             this.listenerList = [];
             this.type = type;
         }
@@ -1315,13 +1325,6 @@ var engine;
                 });
             }
         };
-        DisplayObject.prototype.dispatchEvent = function (event) {
-            this.listenerList.forEach(function (listen) {
-                if (listen.type == event.type) {
-                    listen.func();
-                }
-            });
-        };
         DisplayObject.prototype.addEventListener = function (type, func, IsCatch) {
             var EventListener = new engine.EventListen(type, func, IsCatch);
             if (this.listenerList.indexOf(EventListener) == -1)
@@ -1349,6 +1352,16 @@ var engine;
             if (type === void 0) { type = "DisplayObjectContainer"; }
             var _this = _super.call(this, type) || this;
             _this.DisplayObjects = [];
+            _this.dispatchEvent = function (event) {
+                _this.DisplayObjects.forEach(function (child) {
+                    child.dispatchEvent(event);
+                });
+                _this.listenerList.forEach(function (listen) {
+                    if (listen.type == event.type) {
+                        listen.func();
+                    }
+                });
+            };
             return _this;
         }
         DisplayObjectContainer.prototype.addChild = function (child) {
@@ -1410,16 +1423,6 @@ var engine;
             else
                 return [];
         };
-        DisplayObjectContainer.prototype.dispatchEvent = function (event) {
-            this.DisplayObjects.forEach(function (child) {
-                child.dispatchEvent(event);
-            });
-            this.listenerList.forEach(function (listen) {
-                if (listen.type == event.type) {
-                    listen.func();
-                }
-            });
-        };
         DisplayObjectContainer.prototype.swapChildren = function (from, to) {
             var fromIndex = this.DisplayObjects.indexOf(from);
             if (fromIndex == -1) {
@@ -1477,6 +1480,12 @@ var engine;
             // this.img = document.createElement("img");
         }
         Object.defineProperty(Bitmap.prototype, "src", {
+            // setx(targetx: number) {
+            //     this.x = targetx - this.img.bitmapData.width / 2;
+            // }
+            // sety(targety:number) {
+            //     this.y = targety - this.img.bitmapData.height / 2;
+            // }
             set: function (id) {
                 this.img = engine.ResourceManager.getRes(id);
             },

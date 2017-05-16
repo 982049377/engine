@@ -84,8 +84,11 @@ namespace engine.ResourceManager {
             realResource.src = this.url;
             realResource.onload = () => {
                 this.bitmapData = realResource;
+                this.width = realResource.width;
+                this.height = realResource.height;
                 this.isLoaded = true;
             }
         }
+
     }
 }

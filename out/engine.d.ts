@@ -522,7 +522,7 @@ declare namespace engine {
         touchEnable: boolean;
         touchChildren: boolean;
         $dispatchPropagationEvent(Chain: DisplayObject[], touchEvent: MyTouchEvent, isCapture?: boolean): void;
-        dispatchEvent(event: Event): void;
+        dispatchEvent: (event: Event) => void;
         listenerList: EventListen[];
         addEventListener(type: string, func: Function, IsCatch?: boolean): void;
         removeEventListener(type: string, func: Function, IsCatch?: boolean): void;
@@ -537,7 +537,7 @@ declare namespace engine {
         removeAllChild(): void;
         update(): void;
         hitTest(x: number, y: number): DisplayObject[];
-        dispatchEvent(event: Event): void;
+        dispatchEvent: (event: Event) => void;
         swapChildren(from: DisplayObject, to: DisplayObject): void;
     }
 }
