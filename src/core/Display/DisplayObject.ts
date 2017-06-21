@@ -43,6 +43,22 @@ namespace engine {
             // this.resetMatrix(canvas);
 
         }
+
+
+        dispalyList: string = '';
+        MapDisplay(displayObject: engine.DisplayObject) {
+            this.dispalyList.match(displayObject.type);
+            switch (displayObject.type) {
+                case "TextField":
+                    return this.dispalyList;
+                case "Bitmap":
+                    return this.dispalyList;
+                case "Stage" || "DisplayObjectContainer":
+                    this.MapDisplay(displayObject.dispalyList[0]);
+            }
+            return this.dispalyList;
+        }
+
         // updateMatrix(canvas: CanvasRenderingContext2D) {
         //     canvas.globalAlpha = this.localAlpha;
         //     canvas.setTransform(this.localMatrix.a, this.localMatrix.b, this.localMatrix.c, this.localMatrix.d, this.localMatrix.tx, this.localMatrix.ty);
@@ -82,7 +98,7 @@ namespace engine {
                 });
             }
         }
-        dispatchEvent=(event: Event)=> {
+        dispatchEvent = (event: Event) => {
             this.listenerList.forEach(listen => {
                 if (listen.type == event.type) {
                     listen.func();
